@@ -1,1 +1,1 @@
-
+(Descripción del hardware)
