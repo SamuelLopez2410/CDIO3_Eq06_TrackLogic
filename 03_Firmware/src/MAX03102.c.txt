@@ -1,0 +1,201 @@
+/*
+  MAX30102 – Recordatorio de Hidratación
+  - Lee BPM/SpO2 con MAX30102
+  - Ajusta el intervalo de hidratación según zona de esfuerzo
+  - LED y buzzer avisan; botón reconoce la hidratación y reinicia el timer
+
+  Hardware:
+    ESP32 (o Arduino UNO/Nano)
+    MAX30102 (I2C)
+    LED aviso: GPIO2 (ESP32) + 220Ω
+    Buzzer:    GPIO4
+    Botón:     GPIO15 a GND (pull-up interno)
+
+  Librerías:
+    - SparkFun MAX3010x Sensor Library
+*/
+
+#include <Wire.h>
+#include "MAX30105.h"           // Funciona con MAX30102/30105
+#include "heartRate.h"          // del paquete SparkFun, para detectar BPM
+
+// Pines (ajusta si hace falta)
+#if defined(ESP32)
+  const int PIN_LED    = 2;
+  const int PIN_BUZZER = 4;
+  const int PIN_BTN    = 15;
+#else
+  const int PIN_LED    = 13;  // en Arduino UNO NANO puedes usar 13
+  const int PIN_BUZZER = 8;
+  const int PIN_BTN    = 7;
+#endif
+
+// ---- Objetos y variables del sensor
+MAX30105 particleSensor;
+
+// Buffer y estado BPM
+const uint8_t SAMPLES_WINDOW = 100; // ~1-2 s según sampleRate
+uint32_t irBuffer[SAMPLES_WINDOW];
+uint32_t redBuffer[SAMPLES_WINDOW];
+int32_t spo2;                // SpO2 calculado
+int8_t validSPO2;            // bandera de validez
+int32_t heartRate;           // BPM
+int8_t validHeartRate;
+
+// Promedio móvil de BPM para estabilidad
+const int BPM_AVG_LEN = 30;  // ~10-15 s si cada ~0.3-0.5 s se actualiza
+float bpmRing[BPM_AVG_LEN];
+int bpmIdx = 0;
+bool bpmPrimed = false;
+
+// ---- Hidratación
+unsigned long lastHydrationMillis = 0;
+unsigned long hydrationIntervalMs = 20UL * 60UL * 1000UL; // 20 min por defecto
+bool alertActive = false;
+
+// ---- Umbrales de zonas (ajusta a tu caso)
+const int BPM_ZONE_MOD   = 90;   // >=90 -> moderado
+const int BPM_ZONE_INT   = 120;  // >=120 -> intenso
+
+// ---- Funciones auxiliares
+float computeBpmAverage(float newBpm) {
+  bpmRing[bpmIdx] = newBpm;
+  bpmIdx = (bpmIdx + 1) % BPM_AVG_LEN;
+  if (bpmIdx == 0) bpmPrimed = true;
+  int n = bpmPrimed ? BPM_AVG_LEN : bpmIdx;
+  float sum = 0;
+  for (int i = 0; i < n; i++) sum += bpmRing[i];
+  return (n > 0) ? (sum / n) : newBpm;
+}
+
+void setHydrationIntervalFromBPM(float bpmAvg) {
+  // Reglas simples por zona
+  if (bpmAvg >= BPM_ZONE_INT) {
+    hydrationIntervalMs = 10UL * 60UL * 1000UL; // 10 min
+  } else if (bpmAvg >= BPM_ZONE_MOD) {
+    hydrationIntervalMs = 15UL * 60UL * 1000UL; // 15 min
+  } else {
+    hydrationIntervalMs = 20UL * 60UL * 1000UL; // 20 min
+  }
+}
+
+void triggerAlert() {
+  alertActive = true;
+  // Patrón simple de alerta (3 beeps y LED parpadeo)
+  for (int k = 0; k < 3; k++) {
+    digitalWrite(PIN_LED, HIGH);
+    tone(PIN_BUZZER, 2000, 200); // 2 kHz por 200 ms (si buzzer pasivo, usar analogWrite en algunos MCUs)
+    delay(250);
+    digitalWrite(PIN_LED, LOW);
+    delay(150);
+  }
+}
+
+void clearAlertAndResetTimer() {
+  alertActive = false;
+  lastHydrationMillis = millis();
+  digitalWrite(PIN_LED, LOW);
+  noTone(PIN_BUZZER);
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(200);
+
+  pinMode(PIN_LED, OUTPUT);
+  pinMode(PIN_BUZZER, OUTPUT);
+  pinMode(PIN_BTN, INPUT_PULLUP); // botón a GND
+
+  // I2C
+  Wire.begin(); // ESP32 usa default SDA=21, SCL=22
+
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
+    Serial.println(F("No se encontró MAX3010x. Verifica cableado/alimentación."));
+    while (1) { delay(10); }
+  }
+
+  // Config del MAX30102
+  // Modo multi-LED (Rojo + IR) y parámetros típicos para HR/SpO2.
+  byte ledBrightness = 0x1F; // 6.4mA aprox; sube si señal es débil (hasta 0xFF)
+  byte sampleAverage = 4;
+  byte ledMode = 2;          // 2 = Red + IR
+  int sampleRate = 100;      // 50–200 Hz para HR
+  int pulseWidth = 411;      // 411 µs -> 18-bit resol
+  int adcRange = 16384;      // 16k nA
+
+  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+
+  // “Prende” el sensor con offset limpio
+  particleSensor.setPulseAmplitudeRed(0x1F);
+  particleSensor.setPulseAmplitudeIR(0x1F);
+
+  // Inicializa buffers BPM promedio
+  for (int i=0; i<BPM_AVG_LEN; i++) bpmRing[i] = 0;
+
+  lastHydrationMillis = millis();
+  Serial.println(F("MAX30102 listo. Iniciando lectura para recordatorio de hidratación..."));
+}
+
+void loop() {
+  // 1) Leer muestras disponibles
+  while (particleSensor.available()) {
+    // Leer valores crudos
+    uint32_t red = particleSensor.getRed();
+    uint32_t ir  = particleSensor.getIR();
+
+    // Detectar latidos (SparkFun heartRate)
+    // La función 'checkForBeat(ir)' devuelve true cuando detecta un pico (latido)
+    static uint32_t lastBeat = 0;
+    if (checkForBeat(ir)) {
+      uint32_t now = millis();
+      float delta = (now - lastBeat) / 1000.0;
+      lastBeat = now;
+
+      if (delta > 0 && delta < 2.0) { // filtra intervalos aberrantes
+        float bpm = 60.0 / delta;
+        float bpmAvg = computeBpmAverage(bpm);
+
+        setHydrationIntervalFromBPM(bpmAvg);
+
+        Serial.print(F("BPM inst: "));  Serial.print(bpm, 1);
+        Serial.print(F(" | BPM avg: "));Serial.print(bpmAvg, 1);
+        Serial.print(F(" | Intervalo: ")); Serial.print(hydrationIntervalMs / 60000.0, 0);
+        Serial.println(F(" min"));
+      }
+    }
+
+ 
+
+    particleSensor.nextSample(); // Avanza el FIFO del sensor
+  }
+
+  // 2) Lógica de alerta por tiempo de hidratación
+  unsigned long now = millis();
+  if (!alertActive && (now - lastHydrationMillis >= hydrationIntervalMs)) {
+    triggerAlert();
+  }
+
+  // 3) Botón para “Tomé agua / posponer”
+  if (alertActive == true) {
+    // Parpadeo mientras está activa la alerta
+    static unsigned long tBlink = 0;
+    if (now - tBlink > 400) {
+      tBlink = now;
+      digitalWrite(PIN_LED, !digitalRead(PIN_LED));
+    }
+  }
+
+  // Reconocer el recordatorio
+  if (digitalRead(PIN_BTN) == LOW) {
+    // Anti-rebote simple
+    delay(30);
+    if (digitalRead(PIN_BTN) == LOW) {
+      clearAlertAndResetTimer();
+      Serial.println(F("Hidratación reconocida. Temporizador reiniciado."));
+      // Esperar a soltar el botón
+      while (digitalRead(PIN_BTN) == LOW) delay(10);
+    }
+  }
+
+  delay(5); // Ajusta para carga de CPU
+}
