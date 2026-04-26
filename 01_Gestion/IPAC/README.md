@@ -1,38 +1,63 @@
-📂 Actas y Evolución de Planeación
+# Retrospectiva IPAC — Lecciones Aprendidas
 
-Este directorio contiene los documentos de gestión, seguimiento y planeación del proyecto del grupo TrackLogic. Su propósito es dejar evidencia clara de las reuniones, decisiones, avances y tareas realizadas durante el desarrollo del proyecto.
+**Proyecto:** TrackLogic
+**Ciclo:** IPAC-03 → IPAC-04
+**Fecha:** 2026-04-06
+**Facilitador:** Equipo TrackLogic
 
-Las actas permiten llevar una trazabilidad del proceso, ya que muestran cómo el equipo pasó de la organización inicial a la revisión de componentes, montaje, pruebas y preparación de la entrega.
+---
 
-✅ VERSIÓN 2: Planeación Maestra Actualizada
+## 🔴 ¿Qué falló?
 
-Esta versión corresponde a la planeación actual del proyecto TrackLogic, basada en los avances reales del equipo, la llegada de componentes electrónicos y la verificación del sistema.
+### Fallo 1 — Retraso por llegada de componentes
 
-Característica:
-Basada en componentes reales, revisión del diseño, organización del repositorio, tablero Kanban y preparación para montaje y pruebas.
+**Síntoma:** El avance del montaje y las pruebas se detuvo porque algunos componentes electrónicos aún no habían llegado.
+**Causa raíz:** La planeación dependía de materiales externos y los tiempos de entrega afectaron el cronograma.
+**Impacto:** No se pudo avanzar completamente con la etapa de implementación física del sistema.
 
-Estado:
-ACTIVA. Es el documento principal para orientar el desarrollo actual del proyecto.
+### Fallo 2 — Diseño del chaleco pendiente
 
-📄 Documentos disponibles
+**Síntoma:** No se tenía definida completamente la ubicación física de los sensores en el chaleco.
+**Causa raíz:** Faltaba validar la comodidad, distribución y fijación de los componentes en la estructura.
+**Impacto:** La integración del circuito con el usuario final quedó limitada hasta definir el diseño mecánico.
 
-En esta carpeta se encuentran las actas de reunión del equipo, donde se registran los avances del proyecto:
+### Fallo 3 — Código aún en revisión
 
-Acta de reunión 1: organización del equipo, creación del repositorio en GitHub y planeación inicial de actividades.
-Acta de reunión 2: investigación técnica de componentes y revisión de sensores.
-Acta de reunión 3: revisión del hardware disponible, pedidos realizados y organización de evidencias.
-Acta de reunión 4: revisión final del repositorio y del documento técnico.
-Acta de reunión 5: revisión del estado actual del proyecto y espera de componentes electrónicos.
-Acta de reunión 6: recepción, verificación y reconocimiento de componentes electrónicos.
+**Síntoma:** El firmware no estaba totalmente validado para integrar todos los sensores.
+**Causa raíz:** Era necesario revisar librerías, conexiones y lectura de datos de cada sensor.
+**Impacto:** La etapa de pruebas del sistema completo quedó pendiente.
 
-🔄 Evolución de la planeación actual
+### Fallo 4 — Repositorio con necesidad de revisión final
 
-La planeación del proyecto TrackLogic evolucionó de forma progresiva. Primero se organizó el equipo, se creó el repositorio y se asignaron tareas. Luego se investigaron los sensores y componentes necesarios. Después se revisó el hardware disponible y se verificaron los pedidos realizados.
+**Síntoma:** El repositorio requería organización, limpieza y verificación antes de la entrega.
+**Causa raíz:** Durante el desarrollo se fueron agregando archivos y evidencias que necesitaban ordenarse.
+**Impacto:** Podía afectar la presentación del proyecto y la trazabilidad del trabajo realizado.
 
-Más adelante, el equipo revisó el estado general del proyecto y confirmó que el avance dependía de la llegada de algunos componentes. Finalmente, cuando estos fueron recibidos, se verificó que cumplieran con las especificaciones requeridas y se preparó el material para iniciar el montaje, las pruebas y la validación del sistema.
+---
 
-🔍 Notas de auditoría
+## ✅ Acciones Correctivas Implementadas / Planificadas
 
-Para considerar una actividad como terminada, el equipo TrackLogic no solo toma en cuenta que la tarea esté asignada, sino que exista evidencia de su cumplimiento. Por eso, las actas registran reuniones, responsables, metas alcanzadas y tareas pendientes.
+| #     | Acción                                                          | Tipo          | Estado         | Responsable                                           |
+| ----- | --------------------------------------------------------------- | ------------- | -------------- | ----------------------------------------------------- |
+| AC-01 | Revisar nuevamente el código y validar lectura de sensores      | Firmware      | 🚧 En progreso | Miguel Ángel Rincón Gonzáles / Mariajose Henao Loaiza |
+| AC-02 | Verificar componentes recibidos y comparar con especificaciones | Hardware      | ✅ Implementado | María José Yara Gómez                                 |
+| AC-03 | Organizar y actualizar el repositorio en GitHub                 | Gestión       | 🚧 En progreso | María José Yara Gómez                                    |
+| AC-04 | Revisar diseño del chaleco y definir ubicación de sensores      | Mecánica      | 📋 Planificado | Samuel Lopez Lozano                                  |
+| AC-05 | Preparar pruebas de montaje y validación del sistema            | Pruebas       | 📋 Planificado | Todos                                                 |
+| AC-06 | Preparar sustentación y repasar funciones de cada integrante    | Documentación | 📋 Planificado | Todos                                                 |
 
-Esto permite demostrar que el avance del proyecto se basa en evidencias reales, como la revisión del repositorio, la organización del tablero Kanban, la verificación de componentes y la preparación para las pruebas del sistema
+---
+
+## 💡 Lo que funcionó bien
+
+La organización del equipo permitió asignar responsabilidades desde las primeras semanas. También funcionó bien el uso del repositorio en GitHub y el tablero Kanban, porque ayudaron a llevar seguimiento de las tareas. Además, la revisión de componentes permitió confirmar cuáles materiales estaban disponibles y cuáles seguían pendientes. Otro aspecto positivo fue la documentación mediante actas, ya que dejó evidencia clara de los avances y decisiones del grupo.
+
+---
+
+## 📌 Compromisos para IPAC-04
+
+* Revisar y ajustar el código antes de continuar con las pruebas completas.
+* Definir el diseño final del chaleco y la ubicación de los sensores.
+* Mantener actualizado el repositorio con evidencias, código y documentación.
+* Realizar pruebas de funcionamiento con los sensores disponibles.
+* Preparar la sustentación final con participación de todos los integrantes.
