@@ -24,6 +24,7 @@ Acta de reunión 3: revisión del hardware disponible, pedidos realizados y orga
 Acta de reunión 4: revisión final del repositorio y del documento técnico.
 Acta de reunión 5: revisión del estado actual del proyecto y espera de componentes electrónicos.
 Acta de reunión 6: recepción, verificación y reconocimiento de componentes electrónicos.
+
 🔄 Evolución de la planeación actual
 
 La planeación del proyecto TrackLogic evolucionó de forma progresiva. Primero se organizó el equipo, se creó el repositorio y se asignaron tareas. Luego se investigaron los sensores y componentes necesarios. Después se revisó el hardware disponible y se verificaron los pedidos realizados.
