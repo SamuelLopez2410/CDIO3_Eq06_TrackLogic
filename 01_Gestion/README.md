@@ -1,7 +1,3 @@
-Listo 👍 aquí tienes ese apartado adaptado completamente a tu proyecto **TrackLogic**, manteniendo el estilo técnico pero con tus componentes y realidad:
-
----
-
 # 🧪 Protocolos de Prueba — Validación y Verificación (V&V)
 
 **Proyecto:** TrackLogic
@@ -144,12 +140,3 @@ Listo 👍 aquí tienes ese apartado adaptado completamente a tu proyecto **Trac
 ## 🔴 Observaciones generales
 
 Actualmente el proyecto **TrackLogic** presenta avances en la verificación de componentes y conexiones, pero aún se encuentra en proceso de validación de sensores y pruebas completas del sistema. Las principales dificultades están en la estabilidad de las lecturas y en la integración total del hardware.
-
----
-
-Si quieres, el siguiente paso te lo hago 🔥:
-✅ igual que este pero en formato tabla tipo Excel
-✅ o te lo integro con los **fallos y retrospectiva (IPAC)**
-✅ o te hago los **protocolos más técnicos (nivel profesor exigente)**
-
-Solo dime 👍
