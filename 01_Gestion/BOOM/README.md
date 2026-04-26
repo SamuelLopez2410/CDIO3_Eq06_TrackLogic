@@ -1,38 +1,70 @@
-📂 Actas y Evolución de Planeación
+# 🛒 Lista de Materiales
 
-Este directorio contiene los documentos de gestión, seguimiento y planeación del proyecto del grupo TrackLogic. Su propósito es dejar evidencia clara de las reuniones, decisiones, avances y tareas realizadas durante el desarrollo del proyecto.
+## Bill of Materials - BOM
 
-Las actas permiten llevar una trazabilidad del proceso, ya que muestran cómo el equipo pasó de la organización inicial a la revisión de componentes, montaje, pruebas y preparación de la entrega.
+Este documento presenta los componentes necesarios para el desarrollo de una unidad funcional del sistema del grupo **TrackLogic**. La lista incluye los elementos principales de control, percepción, conectividad, alimentación y mecánica que permiten el funcionamiento del proyecto.
 
-✅ VERSIÓN 2: Planeación Maestra Actualizada
+---
 
-Esta versión corresponde a la planeación actual del proyecto TrackLogic, basada en los avances reales del equipo, la llegada de componentes electrónicos y la verificación del sistema.
+## ⚡ Electrónica Principal
 
-Característica:
-Basada en componentes reales, revisión del diseño, organización del repositorio, tablero Kanban y preparación para montaje y pruebas.
+| Ítem | Componente               | Cant. | Referencia / Especificación | Función                                               | Est. Costo |
+| ---- | ------------------------ | ----: | --------------------------- | ----------------------------------------------------- | ---------: |
+| 1    | Microcontrolador         |     1 | ESP32 Dev Module            | Control principal del sistema y conexión con sensores |    $10.000 |
+| 2    | Sensor de ritmo cardiaco |     1 | MAX30105                    | Medición de señales biométricas                       |    $30.000 |
+| 3    | Sensor de movimiento     |     1 | MPU6050 GY-521              | Medición de movimiento, inclinación y aceleración     |    $20.000 |
+| 4    | Sensor de temperatura    |     1 | MLX90614ESF-BAA             | Medición de temperatura sin contacto                  |    $47.000 |
+| 5    | Sensor secundario        |     1 | MAX30102                    | Apoyo en medición biométrica                          |    $28.000 |
 
-Estado:
-ACTIVA. Es el documento principal para orientar el desarrollo actual del proyecto.
+---
 
-📄 Documentos disponibles
+## 🔋 Sistema de Potencia
 
-En esta carpeta se encuentran las actas de reunión del equipo, donde se registran los avances del proyecto:
+En el documento se identifica que el sistema de alimentación aún se encuentra en definición. Por esta razón, este apartado queda como pendiente hasta seleccionar la batería más adecuada para alimentar el ESP32 y los sensores de forma inalámbrica.
 
-Acta de reunión 1: organización del equipo, creación del repositorio en GitHub y planeación inicial de actividades.
-Acta de reunión 2: investigación técnica de componentes y revisión de sensores.
-Acta de reunión 3: revisión del hardware disponible, pedidos realizados y organización de evidencias.
-Acta de reunión 4: revisión final del repositorio y del documento técnico.
-Acta de reunión 5: revisión del estado actual del proyecto y espera de componentes electrónicos.
-Acta de reunión 6: recepción, verificación y reconocimiento de componentes electrónicos.
+| Ítem | Componente                    | Cant. | Referencia / Especificación | Función                         | Estado    |
+| ---- | ----------------------------- | ----: | --------------------------- | ------------------------------- | --------- |
+| 6    | Batería para alimentación     |     1 | Por definir                 | Fuente de energía principal     | Pendiente |
+| 7    | Sistema de carga o regulación |     1 | Por definir                 | Gestión de energía del circuito | Pendiente |
 
-🔄 Evolución de la planeación actual
+---
 
-La planeación del proyecto TrackLogic evolucionó de forma progresiva. Primero se organizó el equipo, se creó el repositorio y se asignaron tareas. Luego se investigaron los sensores y componentes necesarios. Después se revisó el hardware disponible y se verificaron los pedidos realizados.
+## 🛠️ Interfaz y Mecánica
 
-Más adelante, el equipo revisó el estado general del proyecto y confirmó que el avance dependía de la llegada de algunos componentes. Finalmente, cuando estos fueron recibidos, se verificó que cumplieran con las especificaciones requeridas y se preparó el material para iniciar el montaje, las pruebas y la validación del sistema.
+Esta sección reúne los elementos relacionados con la estructura física y la integración del sistema. Según la planeación, el chaleco aún debe diseñarse y adaptarse para integrar los sensores y el circuito.
 
-🔍 Notas de auditoría
+| Ítem | Componente         | Cant. | Referencia / Especificación            | Función                           | Estado          |
+| ---- | ------------------ | ----: | -------------------------------------- | --------------------------------- | --------------- |
+| 8    | Chaleco            |     1 | Diseño pendiente                       | Soporte físico del sistema        | Bloqueante      |
+| 9    | PCB / Baquela      |     1 | Diseño en Proteus y montaje en baquela | Base del circuito                 | En modificación |
+| 10   | Buzzer             |     1 | Buzzer electrónico                     | Señal sonora o alerta del sistema | Listo para PCB  |
+| 11   | Cableado e insumos |     1 | Cables, estaño y conectores            | Ensamble del circuito             | Requerido       |
 
-Para considerar una actividad como terminada, el equipo TrackLogic no solo toma en cuenta que la tarea esté asignada, sino que exista evidencia de su cumplimiento. Por eso, las actas registran reuniones, responsables, metas alcanzadas y tareas pendientes.
+---
 
-Esto permite demostrar que el avance del proyecto se basa en evidencias reales, como la revisión del repositorio, la organización del tablero Kanban, la verificación de componentes y la preparación para las pruebas del sistema
+## 💰 Resumen de Presupuesto
+
+| Categoría                        | Subtotal Estimado |
+| -------------------------------- | ----------------: |
+| Electrónica principal y sensores |          $135.000 |
+| Potencia y energía               |       Por definir |
+| Mecánica e insumos               |       Por definir |
+| **TOTAL PARCIAL ESTIMADO**       |  **$135.000 COP** |
+
+Los costos corresponden a valores estimados registrados en la planeación del proyecto, usando proveedores como **AliExpress** y **MercadoLibre**.
+
+---
+
+## 📍 Proveedores Identificados
+
+Los proveedores mencionados para la adquisición de componentes son:
+
+* **AliExpress:** ESP32, MAX30105.
+* **MercadoLibre:** MPU6050, MLX90614 y MAX30102.
+* **Universidad / laboratorio:** apoyo para diseño, pruebas, PCB, baquela y estructura del chaleco.
+
+---
+
+## 🔍 Observaciones
+
+Algunos componentes ya se encuentran disponibles, como el **ESP32**, el **MPU6050** y el **MAX30102**. Sin embargo, otros elementos siguen pendientes, como el **MAX30105**, el **MLX90614**, la batería de alimentación y el diseño final del chaleco. Por eso, estos elementos deben priorizarse para continuar con la fase de montaje y pruebas del sistema.
