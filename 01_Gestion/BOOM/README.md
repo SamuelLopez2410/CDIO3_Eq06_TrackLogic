@@ -1,7 +1,3 @@
-Aquí tienes la sección lista, ajustada al proyecto **TrackLogic** y basada en el documento de materiales:
-
----
-
 # 🛒 Lista de Materiales
 
 ## Bill of Materials - BOM
