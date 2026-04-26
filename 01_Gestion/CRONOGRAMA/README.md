@@ -1,7 +1,3 @@
-Listo 👍 te lo adapté completamente a tu proyecto **TrackLogic** usando tu cronograma real:
-
----
-
 # 🚀 TrackLogic
 
 **Estado:** En Desarrollo
