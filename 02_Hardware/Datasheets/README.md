@@ -26,7 +26,3 @@ Link con información necesaria para el uso del microcontrolador:
 ## 🔊 Otros componentes
 
 * **Buzzer:** Salida de alertas del sistema.
-
----
-
-Si quieres te lo dejo aún más corto tipo README 👌
