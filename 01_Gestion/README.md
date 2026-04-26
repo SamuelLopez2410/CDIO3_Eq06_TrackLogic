@@ -1,142 +1,106 @@
-# 🧪 Protocolos de Prueba — Validación y Verificación (V&V)
+# 📂 Gestión del Proyecto TrackLogic
 
-**Proyecto:** TrackLogic
-**Versión:** 2.0
-**Fecha:** 2026-04-06
-**Equipo:** Samuel Lopez Lozano · Miguel Ángel Rincón Gonzáles · María José Yara Gómez · Mariajose Henao Loaiza
+Este directorio centraliza la documentación administrativa, la planificación, las actas, el cronograma, la lista de materiales y el análisis de requisitos del sistema **TrackLogic**.
 
-⚠️ Este protocolo debe ser diligenciado antes de ejecutar cualquier prueba. Los resultados deben registrarse en el repositorio o en la bitácora del proyecto.
-
----
-
-## 🔧 TEST-HW-01-A — Validación de Conexiones del Circuito
-
-**Prioridad:** P1 Alto
-**Estado:** ✅ PASS
-
-| Campo              | Detalle                                                                                  |
-| ------------------ | ---------------------------------------------------------------------------------------- |
-| Objetivo           | Verificar que todas las conexiones entre sensores y ESP32 estén correctamente realizadas |
-| Setup              | ESP32, sensores conectados, protoboard                                                   |
-| Pasos              | 1. Revisar conexiones físicas · 2. Encender sistema · 3. Verificar continuidad           |
-| Resultado esperado | Todos los sensores responden correctamente                                               |
-| Resultado obtenido | Sistema conectado correctamente ✅                                                        |
-| Responsable        | Samuel Lopez Lozano                                                                      |
+**Institución:** Universidad del Quindío
+**Programa:** Ingeniería Electrónica
+**Ubicación:** Armenia, Quindío, Colombia
+**Duración:** Semestre académico
 
 ---
 
-## 📐 TEST-HW-01-B — Verificación de Componentes
+## 🎯 Alcance del Proyecto
 
-**Prioridad:** P1 Alto
-**Estado:** ✅ PASS
-
-| Campo              | Detalle                                                                            |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| Objetivo           | Confirmar que los componentes coinciden con las especificaciones del diseño        |
-| Setup              | Componentes recibidos, datasheets                                                  |
-| Pasos              | 1. Revisar referencias · 2. Comparar con diseño · 3. Validar funcionamiento básico |
-| Resultado esperado | Componentes correctos                                                              |
-| Resultado obtenido | Componentes verificados correctamente ✅                                            |
-| Responsable        | María José Yara Gómez                                                              |
+El objetivo del proyecto **TrackLogic** es desarrollar un sistema embebido portátil, integrado a un chaleco, capaz de monitorear variables biométricas y de movimiento del usuario mediante sensores electrónicos conectados a un microcontrolador ESP32.
 
 ---
 
-## ⚡ TEST-FW-01-A — Lectura de Sensor MPU6050
+## 🎯 Objetivos Específicos
 
-**Prioridad:** P0 Crítico
-**Estado:** 🚧 EN PROCESO
-
-| Campo              | Detalle                                                               |
-| ------------------ | --------------------------------------------------------------------- |
-| Objetivo           | Validar lectura de aceleración y orientación                          |
-| Setup              | ESP32 + MPU6050 + monitor serial                                      |
-| Pasos              | 1. Cargar código · 2. Leer datos · 3. Verificar cambios de movimiento |
-| Resultado esperado | Datos coherentes en eje X, Y, Z                                       |
-| Resultado obtenido | Lectura parcial — requiere ajuste                                     |
-| Responsable        | Miguel Ángel Rincón Gonzáles                                          |
+* Medir señales biométricas mediante sensores **MAX30102 / MAX30105**.
+* Registrar movimiento corporal usando el sensor **MPU6050**.
+* Medir temperatura sin contacto con el sensor **MLX90614**.
+* Integrar los sensores al **ESP32**.
+* Diseñar una estructura tipo **chaleco** para ubicar los componentes.
+* Realizar pruebas de funcionamiento y validación del sistema.
 
 ---
 
-## ❤️ TEST-FW-01-B — Lectura de Sensor MAX30102
+## 📅 Roadmap de Implementación
 
-**Prioridad:** P0 Crítico
-**Estado:** 🚧 EN PROCESO
+### Fase 1: Planeación, componentes y diseño base
 
-| Campo              | Detalle                                                  |
-| ------------------ | -------------------------------------------------------- |
-| Objetivo           | Validar lectura de señal biométrica                      |
-| Setup              | ESP32 + sensor MAX30102                                  |
-| Pasos              | 1. Inicializar sensor · 2. Leer datos · 3. Validar señal |
-| Resultado esperado | Datos estables                                           |
-| Resultado obtenido | Señal inestable                                          |
-| Responsable        | Mariajose Henao Loaiza                                   |
-
----
-
-## 🌡️ TEST-FW-01-C — Lectura de Sensor MLX90614
-
-**Prioridad:** P1 Alto
-**Estado:** 📋 PENDIENTE
-
-| Campo              | Detalle                                                               |
-| ------------------ | --------------------------------------------------------------------- |
-| Objetivo           | Validar medición de temperatura sin contacto                          |
-| Setup              | ESP32 + MLX90614                                                      |
-| Pasos              | 1. Conectar sensor · 2. Leer temperatura · 3. Comparar con valor real |
-| Resultado esperado | Medición cercana a valor real                                         |
-| Resultado obtenido | Pendiente                                                             |
-| Responsable        | Miguel Ángel Rincón Gonzáles                                          |
+| Semanas | Hito / Entregable                                                  | Estado        |
+| ------- | ------------------------------------------------------------------ | ------------- |
+| 1 - 2   | Organización del equipo, creación del repositorio y tablero Kanban | 🟢 Hecho      |
+| 3 - 4   | Revisión de hardware, pedidos y selección de sensores              | 🟢 Hecho      |
+| 5 - 6   | Recepción y verificación de componentes electrónicos               | 🟡 En proceso |
+| 7 - 8   | Integración inicial de sensores con ESP32                          | 🟡 En proceso |
+| 9 - 10  | Diseño del chaleco y ubicación de sensores                         | 🔴 Pendiente  |
+| 11 - 12 | Montaje del circuito en PCB / baquela                              | 🔴 Pendiente  |
+| 13 - 14 | Pruebas funcionales del sistema completo                           | 🔴 Pendiente  |
+| 15 - 16 | Documentación final y sustentación                                 | 🔴 Pendiente  |
 
 ---
 
-## 🔋 TEST-MC-01-A — Validación del Sistema de Energía
+## ⚙️ Matriz de Requisitos
 
-**Prioridad:** P0 Crítico
-**Estado:** 📋 PENDIENTE
+### Requisitos Funcionales
 
-| Campo              | Detalle                                                           |
-| ------------------ | ----------------------------------------------------------------- |
-| Objetivo           | Verificar funcionamiento estable del sistema con batería          |
-| Setup              | Batería conectada al sistema                                      |
-| Pasos              | 1. Encender sistema · 2. Medir voltaje · 3. Verificar estabilidad |
-| Resultado esperado | Funcionamiento continuo sin fallos                                |
-| Resultado obtenido | Pendiente                                                         |
-| Responsable        | Samuel Lopez Lozano                                               |
-
----
-
-## 🧍 TEST-HW-01-C — Integración en Chaleco
-
-**Prioridad:** P2 Medio
-**Estado:** 📋 PENDIENTE
-
-| Campo              | Detalle                                                                |
-| ------------------ | ---------------------------------------------------------------------- |
-| Objetivo           | Validar ubicación y fijación de sensores en el chaleco                 |
-| Setup              | Chaleco + sensores                                                     |
-| Pasos              | 1. Instalar sensores · 2. Verificar comodidad · 3. Revisar estabilidad |
-| Resultado esperado | Sensores fijos y funcionales                                           |
-| Resultado obtenido | Pendiente                                                              |
-| Responsable        | María José Yara Gómez                                                  |
+| Código | Requisito                                                                 |
+| ------ | ------------------------------------------------------------------------- |
+| RF-001 | El sistema debe medir señales biométricas del usuario.                    |
+| RF-002 | El sistema debe registrar movimiento mediante acelerómetro y giroscopio.  |
+| RF-003 | El sistema debe medir temperatura sin contacto.                           |
+| RF-004 | El sistema debe procesar los datos usando un ESP32.                       |
+| RF-005 | El sistema debe emitir alertas mediante buzzer.                           |
+| RF-006 | El sistema debe permitir la integración física de sensores en un chaleco. |
+| RF-007 | El sistema debe permitir pruebas y validación de funcionamiento.          |
 
 ---
 
-## 📊 TEST-SYS-01 — Prueba del Sistema Completo
+### Requisitos No Funcionales
 
-**Prioridad:** P0 Crítico
-**Estado:** 📋 PENDIENTE
-
-| Campo              | Detalle                                                              |
-| ------------------ | -------------------------------------------------------------------- |
-| Objetivo           | Validar funcionamiento completo del sistema                          |
-| Setup              | Sistema integrado completo                                           |
-| Pasos              | 1. Encender sistema · 2. Leer sensores · 3. Verificar funcionamiento |
-| Resultado esperado | Sistema funcional sin errores                                        |
-| Resultado obtenido | Pendiente                                                            |
-| Responsable        | Todos                                                                |
+| Código  | Requisito                                                         |
+| ------- | ----------------------------------------------------------------- |
+| RNF-001 | El sistema debe ser portable y cómodo para el usuario.            |
+| RNF-002 | Los sensores deben estar ubicados de forma estable en el chaleco. |
+| RNF-003 | El circuito debe tener bajo consumo de energía.                   |
+| RNF-004 | El sistema debe ser seguro para el usuario.                       |
+| RNF-005 | El diseño debe facilitar mantenimiento y revisión de componentes. |
+| RNF-006 | El proyecto debe mantenerse dentro del presupuesto definido.      |
 
 ---
 
-## 🔴 Observaciones generales
+## 💰 Presupuesto y Recursos
 
-Actualmente el proyecto **TrackLogic** presenta avances en la verificación de componentes y conexiones, pero aún se encuentra en proceso de validación de sensores y pruebas completas del sistema. Las principales dificultades están en la estabilidad de las lecturas y en la integración total del hardware.
+Según la economía del proyecto, el presupuesto general de **TrackLogic** contempla personal, equipos, materiales, viajes, servicios técnicos y licencias de software.
+
+**Costo total estimado del proyecto:** $13.635.000 COP
+**Costo variable unitario:** $135.000 COP
+**Precio de venta estimado:** $270.000 COP
+
+---
+
+## 🧩 Componentes Principales
+
+* **Microcontrolador:** ESP32 Dev Module
+* **Sensor biométrico:** MAX30102 / MAX30105
+* **Sensor de movimiento:** MPU6050
+* **Sensor de temperatura:** MLX90614
+* **Interfaz:** Buzzer
+* **Estructura:** Chaleco
+* **Base de circuito:** PCB / baquela
+* **Alimentación:** Batería por definir
+
+---
+
+## ⚠️ Gestión de Riesgos y Restricciones
+
+| Riesgo                        | Descripción                                          | Mitigación                                                         |
+| ----------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| Retraso en componentes        | Algunos elementos pueden tardar en llegar.           | Verificar proveedores y hacer seguimiento temprano.                |
+| Fallas en lectura de sensores | Los datos pueden ser inestables.                     | Realizar pruebas individuales antes de integrar todo.              |
+| Diseño del chaleco            | Mala ubicación de sensores puede afectar mediciones. | Probar diferentes posiciones antes del montaje final.              |
+| Energía                       | Batería no definida puede limitar la autonomía.      | Seleccionar batería adecuada para el consumo del ESP32 y sensores. |
+| Organización del repositorio  | Archivos desordenados pueden afectar la entrega.     | Mantener GitHub actualizado y limpio.                              |
