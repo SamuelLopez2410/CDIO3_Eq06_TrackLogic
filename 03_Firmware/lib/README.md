@@ -1,1 +1,0 @@
-(Librerías externas)
