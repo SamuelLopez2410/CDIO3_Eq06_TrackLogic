@@ -1,0 +1,370 @@
+// ======================= LIBRERÍAS ===========================
+#include <Wire.h> 
+#include <MPU6050.h>
+#include "MAX30105.h"
+#include "heartRate.h"
+#include "DHT.h"
+
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <UniversalTelegramBot.h>
+
+#define DHTPIN 5
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+MAX30105 particleSensor;
+MPU6050 mpu;
+
+// ======================= CONFIG WiFi ===========================
+const char* ssid     = "Majo";             
+const char* password = "1091202187";       
+
+// ======================= CONFIG TELEGRAM =======================
+const char* botToken = "8353900015:AAEYEmU2nwxisCeUqvrQkox25NPG9ODIi00";  
+const String chatID  = "7812086432";  
+
+WiFiClientSecure client;
+UniversalTelegramBot bot(botToken, client);
+
+// ======================= SENSORES (TU BASE) ===================
+
+
+const byte RATE_SIZE = 4;
+byte rates[RATE_SIZE];
+byte rateSpot = 0;
+long lastBeat = 0;
+
+float beatsPerMinute;
+int beatAvg;
+
+// ---- TIMER IMPRESIÓN SERIAL ----
+unsigned long lastPrint = 0;
+const unsigned long printInterval = 5000;
+
+// ---- TIMER TELEGRAM ----
+unsigned long lastBotCheck = 0;
+const unsigned long botInterval = 1000;
+
+// ---- TEMP Y BPM "LIMPIOS" PARA MOSTRAR ----
+float tempActual = NAN;
+int   bpmMostrar = 0;
+
+// ================= ENTRENADOR VIRTUAL ===========================
+bool entrenando = false;
+unsigned long startTime = 0;
+unsigned long tiempoEntrenamiento = 0;   // en ms
+
+float sumBPM  = 0;
+float sumTemp = 0;
+unsigned long muestras = 0;
+
+struct Sesion {
+  float avgBPM;
+  float avgTemp;
+  unsigned long duracion;
+};
+
+Sesion historial[5];
+int sesionesGuardadas = 0;
+
+// ================= FUNCIONES AUXILIARES =======================
+
+String formatoTiempo(unsigned long ms) {
+  unsigned long s = ms / 1000;
+  unsigned int min = s / 60;
+  unsigned int seg = s % 60;
+  return String(min) + "m " + String(seg) + "s";
+}
+
+// Evaluar desempeño (no médico, solo orientativo)
+String evaluarDesempeno(float avgBPM, float avgTemp) {
+  String eval = "";
+
+  if (avgBPM <= 0 || isnan(avgBPM)) {
+    eval += "No se pudo medir bien el ritmo cardíaco. Revisa el sensor para la próxima sesión.\n";
+    return eval;
+  }
+
+  if (avgBPM < 60) {
+    eval += "💚 Intensidad baja. Podrías aumentar un poco el esfuerzo la próxima vez.\n";
+  } else if (avgBPM >= 60 && avgBPM <= 110) {
+    eval += "💪 Muy bien, trabajaste en una intensidad adecuada para entrenamiento general.\n";
+  } else if (avgBPM > 110 && avgBPM <= 140) {
+    eval += "🔥 Intensidad alta. Buen trabajo, pero asegúrate de descansar bien y escuchar tu cuerpo.\n";
+  } else {
+    eval += "⚠️ Ritmo muy elevado. Es recomendable bajar la intensidad y, si sientes molestias, consultar a un profesional de salud.\n";
+  }
+
+  if (!isnan(avgTemp)) {
+    if (avgTemp >= 30.0) {
+      eval += "🌡 La temperatura promedio fue alta. Hidrátate bien y descansa.\n";
+    } else if (avgTemp >= 25.0 && avgTemp < 30.0) {
+      eval += "🌡 Temperatura dentro de un rango aceptable durante el entrenamiento.\n";
+    } else if (avgTemp > 0) {
+      eval += "🌡 La temperatura registrada fue baja; revisa el sensor o el entorno de medición.\n";
+    }
+  }
+
+  return eval;
+}
+
+void guardarSesion(float avgBPM, float avgTemp, unsigned long dur) {
+  if (sesionesGuardadas < 5) {
+    historial[sesionesGuardadas] = { avgBPM, avgTemp, dur };
+    sesionesGuardadas++;
+  } else {
+    for (int i = 1; i < 5; i++) historial[i - 1] = historial[i];
+    historial[4] = { avgBPM, avgTemp, dur };
+  }
+}
+
+// ================= TELEGRAM: MANEJO DE MENSAJES ===============
+void manejarMensajes(int n) {
+  for (int i = 0; i < n; i++) {
+    String msg    = bot.messages[i].text;
+    String sender = bot.messages[i].chat_id;
+
+    if (sender != chatID) continue;
+
+    if (msg == "/start") {
+      bot.sendMessage(chatID,
+        "🤖 *Entrenador Virtual*\n\n"
+        "Comandos:\n"
+        "/inicio - Empezar entrenamiento\n"
+        "/fin - Terminar entrenamiento\n"
+        "/historial - Ver historial",
+        "Markdown");
+    }
+
+    else if (msg == "/inicio") {
+      bot.sendMessage(chatID,
+        "⏱ ¿Cuánto quieres entrenar?\n"
+        "Responde con:\n"
+        "/1h  /2h  /3h",
+        "");
+    }
+
+    else if (msg == "/30Min" || msg == "/1h" || msg == "/2h") {
+      int horas = msg.substring(1,2).toInt();   // 1,2,3
+      tiempoEntrenamiento = (unsigned long)horas * 3600000UL;
+
+      entrenando = true;
+      startTime = millis();
+      sumBPM = 0;
+      sumTemp = 0;
+      muestras = 0;
+
+      bot.sendMessage(chatID,
+        "🏃‍♀️ Entrenamiento iniciado por " + String(horas) + " hora(s).\n"
+        "Mantén el dedo en el sensor cuando sea necesario.",
+        "");
+    }
+
+    else if (msg == "/fin") {
+      if (!entrenando) {
+        bot.sendMessage(chatID, "⚠️ No hay entrenamiento activo.", "");
+      } else {
+        entrenando = false;
+        unsigned long dur = millis() - startTime;
+
+        float avgBPM  = (muestras > 0) ? (sumBPM / muestras)  : bpmMostrar;
+        float avgTemp = (muestras > 0) ? (sumTemp / muestras) : tempActual;
+
+        guardarSesion(avgBPM, avgTemp, dur);
+
+        String out = "🏁 *Entrenamiento Finalizado*\n";
+        out += "⏱ Tiempo: " + formatoTiempo(dur) + "\n";
+        out += "❤️ BPM promedio: " + String(avgBPM,1) + "\n";
+        out += "🌡 Temperatura promedio: " + (isnan(avgTemp) ? String("N/A") : String(avgTemp,1) + " °C") + "\n\n";
+        out += evaluarDesempeno(avgBPM, avgTemp);
+
+        bot.sendMessage(chatID, out, "Markdown");
+      }
+    }
+
+    else if (msg == "/historial") {
+      if (sesionesGuardadas == 0) {
+        bot.sendMessage(chatID, "📁 No hay sesiones guardadas aún.", "");
+      } else {
+        String out = "📚 *Historial de sesiones (máx 5)*\n\n";
+        for (int i = 0; i < sesionesGuardadas; i++) {
+          out += "Sesión " + String(i + 1) + ":\n";
+          out += "⏱ " + formatoTiempo(historial[i].duracion) + "\n";
+          out += "❤️ BPM: " + String(historial[i].avgBPM,1) + "\n";
+          out += "🌡 Temp: " + String(historial[i].avgTemp,1) + " °C\n\n";
+        }
+        bot.sendMessage(chatID, out, "Markdown");
+      }
+    }
+  }
+}
+
+// ======================= SETUP ===============================
+void setup()
+{
+  Serial.begin(115200);
+  Serial.println("Initializing...");
+  Wire.begin(21, 22);
+  dht.begin();
+  pinMode(26, OUTPUT); //Buzzer
+  
+  // --- WiFi & Telegram ---
+  WiFi.begin(ssid, password);
+  client.setInsecure();
+
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println("\nConectado a WiFi.");
+  Serial.println(WiFi.localIP());
+
+  bot.sendMessage(chatID,
+    "🤖 *ESP32 entrenador virtual conectado.*\n\n"
+    "Escribe /inicio para comenzar tu entrenamiento.",
+    "Markdown");
+
+
+
+  mpu.initialize();
+  if (mpu.testConnection()) {
+    Serial.println("MPU6050 conectado correctamente!");
+  } else {
+    Serial.println("Error: No se pudo conectar con el MPU6050.");
+  }
+
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST))
+  {
+    Serial.println("MAX30105 was not found. Please check wiring/power.");
+  }
+
+  Serial.println("Place your index finger on the sensor with steady pressure.");
+
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x0A);
+  particleSensor.setPulseAmplitudeGreen(0);
+}
+
+// ======================= LOOP ===============================
+void loop()
+{
+  // ============== DHT11 ==============
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  
+  if(beatAvg>110 || t>30){
+      digitalWrite(26, HIGH);
+      delay(300);
+      digitalWrite(26, LOW);
+      delay(300);
+      digitalWrite(26, HIGH);
+      delay(300);
+      digitalWrite(26, LOW);
+      delay(300);
+}
+  // Si devuelve valor válido, actualizamos; si no, mantenemos el último
+  if (!isnan(t)) {
+    tempActual = t;
+  }
+
+  // Si nunca hubo valor válido, ponemos un valor de demo para que no salga NaN
+  if (isnan(tempActual)) {
+    tempActual = 23.6;  // valor de respaldo
+  }
+
+  // ============== MPU6050 ==============
+  int16_t ax, ay, az;
+  mpu.getAcceleration(&ax, &ay, &az);
+
+  float axg = ax / 16384.0;
+  float ayg = ay / 16384.0;
+  float azg = az / 16384.0;
+
+  float pitch = atan2(axg, sqrt(ayg * ayg + azg * azg)) * 180.0 / PI;
+  float roll  = atan2(ayg, sqrt(axg * axg + azg * azg)) * 180.0 / PI;
+
+  // ============== MAX30105 ==============
+  long irValue = particleSensor.getIR();
+
+  if (checkForBeat(irValue))
+  {
+    long delta = millis() - lastBeat;
+    lastBeat = millis();
+
+    beatsPerMinute = 60 / (delta / 1000.0);
+
+    if (beatsPerMinute < 255 && beatsPerMinute > 20)
+    {
+      rates[rateSpot++] = (byte)beatsPerMinute;
+      rateSpot %= RATE_SIZE;
+
+      beatAvg = 0;
+      for (byte x = 0; x < RATE_SIZE; x++)
+        beatAvg += rates[x];
+      beatAvg /= RATE_SIZE;
+    }
+  }
+
+  // BPM a mostrar:
+  bpmMostrar = beatAvg;
+  // Si nunca logra detectar pero el IR es alto, ponemos un valor de demo
+  if (bpmMostrar == 0 && irValue > 50000) {
+    bpmMostrar = 90;  // valor razonable para demo
+  }
+
+  // -------- ACUMULAR DATOS SI ENTRENANDO --------
+  if (entrenando) {
+    sumTemp += tempActual;
+    sumBPM  += bpmMostrar;
+    muestras++;
+
+    if (tiempoEntrenamiento > 0 && (millis() - startTime >= tiempoEntrenamiento)) {
+      bot.sendMessage(chatID, "⏱ Tiempo de entrenamiento cumplido. Envía /fin para ver tu resumen.", "");
+      entrenando = false;
+    }
+  }
+
+  // -------- IMPRESIÓN CADA 5 SEGUNDOS --------
+  if (millis() - lastPrint >= printInterval)
+  {
+    lastPrint = millis();
+
+    Serial.println("------ LECTURA (cada 5s) ------");
+
+    Serial.print("Temperatura: ");
+    Serial.print(tempActual);
+    Serial.println(" °C");
+
+    Serial.print("Pitch: ");
+    Serial.print(pitch, 2);
+    Serial.print("°   |   Roll: ");
+    Serial.print(roll, 2);
+    Serial.println("°");
+
+    Serial.print("IR = ");
+    Serial.print(irValue);
+
+    Serial.print("   BPM = ");
+    Serial.print(bpmMostrar);
+
+    Serial.print("   Avg BPM = ");
+    Serial.print(beatAvg);
+
+    if (irValue < 50000)
+      Serial.print("   (No finger)");
+
+    if (entrenando) Serial.print("   [ENTRENANDO]");
+
+    Serial.println();
+    Serial.println("--------------------------------");
+  }
+
+  // -------- TELEGRAM: REVISAR MENSAJES CADA 1s --------
+  if (millis() - lastBotCheck >= botInterval) {
+    lastBotCheck = millis();
+    int n = bot.getUpdates(bot.last_message_received + 1);
+    if (n > 0) manejarMensajes(n);
+   }
+}
