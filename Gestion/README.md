@@ -1,6 +1,6 @@
-# 📂 Gestión del Proyecto TrackLogic
+# 📂 Gestión del Proyecto **TrackLogic**
 
-Este directorio centraliza la documentación administrativa, la planificación, las actas, el cronograma, la lista de materiales y el análisis de requisitos del sistema **TrackLogic**.
+Este directorio centraliza la **documentación administrativa**, planificación, actas, cronograma, lista de materiales y análisis de requisitos del sistema **TrackLogic**.
 
 **Institución:** Universidad del Quindío
 **Programa:** Ingeniería Electrónica
@@ -11,18 +11,18 @@ Este directorio centraliza la documentación administrativa, la planificación, 
 
 ## 🎯 Alcance del Proyecto
 
-El objetivo del proyecto **TrackLogic** es desarrollar un sistema embebido portátil, integrado a un chaleco, capaz de monitorear variables biométricas y de movimiento del usuario mediante sensores electrónicos conectados a un microcontrolador ESP32.
+El objetivo del proyecto **TrackLogic** es desarrollar un **sistema embebido portátil**, integrado a un chaleco, capaz de **monitorear variables biométricas** (frecuencia cardíaca, saturación de oxígeno) y de **movimiento** (aceleración y orientación) mediante sensores electrónicos conectados a un **microcontrolador ESP32**.
 
 ---
 
 ## 🎯 Objetivos Específicos
 
-* Medir señales biométricas mediante sensores **MAX30102 / MAX30105**.
-* Registrar movimiento corporal usando el sensor **MPU6050**.
-* Medir temperatura sin contacto con el sensor **MLX90614**.
-* Integrar los sensores al **ESP32**.
-* Diseñar una estructura tipo **chaleco** para ubicar los componentes.
-* Realizar pruebas de funcionamiento y validación del sistema.
+* **Medir señales biométricas** mediante sensores **MAX30102 / MAX30105**.
+* **Registrar movimiento corporal** usando el **sensor MPU6050**.
+* **Medir temperatura sin contacto** con el **sensor MLX90614**.
+* **Integrar los sensores al ESP32** para el procesamiento de datos.
+* **Diseñar una estructura tipo chaleco** para ubicar los componentes.
+* **Realizar pruebas de funcionamiento y validación** del sistema.
 
 ---
 
@@ -30,16 +30,16 @@ El objetivo del proyecto **TrackLogic** es desarrollar un sistema embebido port�
 
 ### Fase 1: Planeación, componentes y diseño base
 
-| Semanas | Hito / Entregable                                                  | Estado        |
-| ------- | ------------------------------------------------------------------ | ------------- |
-| 1 - 2   | Organización del equipo, creación del repositorio y tablero Kanban | 🟢 Hecho      |
-| 3 - 4   | Revisión de hardware, pedidos y selección de sensores              | 🟢 Hecho      |
-| 5 - 6   | Recepción y verificación de componentes electrónicos               | 🟡 En proceso |
-| 7 - 8   | Integración inicial de sensores con ESP32                          | 🟡 En proceso |
-| 9 - 10  | Diseño del chaleco y ubicación de sensores                         | 🔴 Pendiente  |
-| 11 - 12 | Montaje del circuito en PCB / baquela                              | 🔴 Pendiente  |
-| 13 - 14 | Pruebas funcionales del sistema completo                           | 🔴 Pendiente  |
-| 15 - 16 | Documentación final y sustentación                                 | 🔴 Pendiente  |
+| Semanas | Hito / Entregable                                                  | Estado   |
+| ------- | ------------------------------------------------------------------ | -------- |
+| 1 - 2   | Organización del equipo, creación del repositorio y tablero Kanban | 🟢 Hecho |
+| 3 - 4   | Revisión de hardware, pedidos y selección de sensores              | 🟢 Hecho |
+| 5 - 6   | Recepción y verificación de componentes electrónicos               | 🟢 Hecho |
+| 7 - 8   | Integración inicial de sensores con ESP32                          | 🟢 Hecho |
+| 9 - 10  | Diseño del chaleco y ubicación de sensores                         | 🟢 Hecho |
+| 11 - 12 | Montaje del circuito en PCB / baquela                              | 🟢 Hecho |
+| 13 - 14 | Pruebas funcionales del sistema completo                           | 🟢 Hecho |
+| 15 - 16 | Documentación final y sustentación                                 | 🟢 Hecho |
 
 ---
 
@@ -74,21 +74,21 @@ El objetivo del proyecto **TrackLogic** es desarrollar un sistema embebido port�
 
 ## 💰 Presupuesto y Recursos
 
-Según la economía del proyecto, el presupuesto general de **TrackLogic** contempla personal, equipos, materiales, viajes, servicios técnicos y licencias de software.
-
-**Costo total estimado del proyecto:** $13.635.000 COP
-**Costo variable unitario:** $135.000 COP
-**Precio de venta estimado:** $270.000 COP
+* **Costo total estimado del proyecto:** $13.635.000 COP
+* **Costo variable unitario:** $135.000 COP
+* **Precio de venta estimado:** $270.000 COP
 
 ---
 
 ## 🧩 Componentes Principales
 
 * **Microcontrolador:** ESP32 Dev Module
-* **Sensor biométrico:** MAX30102 / MAX30105
-* **Sensor de movimiento:** MPU6050
-* **Sensor de temperatura:** MLX90614
-* **Interfaz:** Buzzer
+* **Sensores:**
+
+  * **MAX30102 / MAX30105** (biométricos)
+  * **MPU6050** (movimiento)
+  * **MLX90614** (temperatura)
+* **Interfaz:** Buzzer (alertas)
 * **Estructura:** Chaleco
 * **Base de circuito:** PCB / baquela
 * **Alimentación:** Batería por definir
@@ -104,3 +104,4 @@ Según la economía del proyecto, el presupuesto general de **TrackLogic** conte
 | Diseño del chaleco            | Mala ubicación de sensores puede afectar mediciones. | Probar diferentes posiciones antes del montaje final.              |
 | Energía                       | Batería no definida puede limitar la autonomía.      | Seleccionar batería adecuada para el consumo del ESP32 y sensores. |
 | Organización del repositorio  | Archivos desordenados pueden afectar la entrega.     | Mantener GitHub actualizado y limpio.                              |
+
