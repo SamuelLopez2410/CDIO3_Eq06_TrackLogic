@@ -5,6 +5,7 @@
 **Fase:** Finalizado y listo para sustentación
 
 **Autores:** Equipo TrackLogic
+
 **Programa:** Ingeniería Electrónica
 
 ---
