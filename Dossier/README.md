@@ -100,6 +100,3 @@ Durante la **fase actual de validación**, el sistema demostró:
 * **Interacción correcta** con Telegram.
 * **Respuesta automática** ante eventos críticos.
 * **Funcionamiento adecuado** del sistema de alertas.
-
-
-Si necesitas más detalles o alguna modificación, avísame y con gusto te ayudo a ajustarlo.
