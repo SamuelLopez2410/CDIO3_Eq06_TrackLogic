@@ -91,7 +91,7 @@ El objetivo del proyecto **TrackLogic** es desarrollar un **sistema embebido por
 * **Interfaz:** Buzzer (alertas)
 * **Estructura:** Chaleco
 * **Base de circuito:** PCB / baquela
-* **Alimentación:** Batería por definir
+* **Alimentación:** Batería portátil 5V
 
 ---
 
