@@ -1,7 +1,3 @@
-Aquí tienes el reporte **actualizado** con las **pruebas finales en campo** ya realizadas y **todo funcional**:
-
----
-
 # 🧪 **Protocolos de Prueba y Validación (V&V)**
 
 **Proyecto:** TrackLogic
