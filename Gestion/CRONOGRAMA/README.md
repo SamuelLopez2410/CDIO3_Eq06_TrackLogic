@@ -1,6 +1,7 @@
 # 🚀 **TrackLogic**
 
 **Estado:** Funcional y Completo
+
 **Hardware:** ESP32
 **Fase:** Finalizado y listo para sustentación
 
